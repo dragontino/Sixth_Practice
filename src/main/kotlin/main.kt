@@ -32,9 +32,11 @@ fun runProgram() {
     val help = Path(filePath, "test", "resources", "Help.txt")
 
     while (isWorking) {
-        val fileName = "$countFiles-й файл"
         countFiles++
-        val file = getFile("$countFiles-й файл (В работе)")
+        val fileName = "$countFiles-й файл"
+        val file = getFile(workingFileName(countFiles))
+        file.createIfNotExists(countFiles)
+
         println("$fileName создан и находится в работе")
         file.writeText("")
 
@@ -78,4 +80,15 @@ fun Path.renameFile(newName: String) {
 
 fun getFile(fileName: String) =
     Path(filePath, "main", "resources", "$fileName.txt")
+
+fun Path.createIfNotExists(index: Int) {
+    val file = getFile(waitingFileName(index))
+    if (file.exists())
+        file.renameFile(workingFileName(index))
+    else
+        createFile()
+}
+
+fun waitingFileName(index: Int) = "$index-й файл (В ожидании)"
+fun workingFileName(index: Int) = "$index-й файл (В работе)"
 
